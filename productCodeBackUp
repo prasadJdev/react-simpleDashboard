@@ -1,0 +1,372 @@
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { v4 as uuidv4 } from "uuid";
+
+import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
+import Button from "react-bootstrap/Button";
+import Alert from "react-bootstrap/Alert";
+
+import ProductCard from "../Components/ProductCard";
+import Modal from "../Components/Modal";
+
+import {
+  addProduct,
+  loadStoredProductsDataToState,
+} from "../Data/ProductsSlice";
+import {
+  addCategory,
+  loadStoredCategoriesDataToState,
+} from "../Data/CategoriesSlice";
+
+
+import { useRef } from "react";
+import store from "../store";
+import { loadStoredDataToState } from "../Data/UsersSlice";
+
+import { getUserById } from "../utils/products/functions";
+
+export var storedProducts = [];
+export var storedUsers = [];
+export var storedCategories = [];
+
+export default function Products() {
+  const [searchText, setSearchText] = useState("");
+
+  const products = useSelector((state) => state.ProductsSlice.products);
+
+  const dispatch = useDispatch();
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+
+  const [showCategories, setShowCategories] = useState(false);
+
+  const handleShowCategoriesClose = () => setShowCategories(false);
+  const handleShowCategoriesOpen = () => setShowCategories(true);
+
+  const LOCAL_STORAGE_KEY = "Users.usersData";
+  useEffect(() => {
+    storedUsers = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+    if (storedUsers) dispatch(loadStoredDataToState(storedUsers));
+  }, []);
+
+  const LOCAL_STORAGE_KEY2 = "Products.productsData";
+  const LOCAL_STORAGE_KEY3 = "Categories.categories";
+  
+  useEffect(() => {
+    storedProducts = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY2));
+    if (storedProducts) dispatch(loadStoredProductsDataToState(storedProducts));
+  }, []);
+  useEffect(() => {
+    storedCategories = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY3));
+    if (storedCategories) dispatch(loadStoredCategoriesDataToState(storedCategories));
+  }, []);
+
+  return (
+    <>
+      <div className="searchNav">
+        <div className="total_count">
+          <div className="total_count_filter">
+            {
+              products.filter(
+                (product) =>
+                  product?.name
+                    .toLowerCase()
+                    .includes(searchText.toLowerCase()) ||
+                  product?.category
+                    .toLowerCase()
+                    .includes(searchText.toLowerCase()) ||
+                  getUserById(product?.soldBy)
+                    .toLowerCase()
+                    .includes(searchText.toLowerCase()) ||
+                  product?.price.toString().includes(searchText.toLowerCase())
+                // user.address.toLowerCase().includes(searchText.toLowerCase())
+              ).length
+            }
+          </div>
+          <span>&nbsp; | &nbsp; </span>
+          <div className="total_count_users">{products.length} </div>
+        </div>
+        <SearchBar searchText={searchText} setSearchText={setSearchText} />
+        <div className="actionBts">
+          <Button variant="secondary" onClick={handleShow}>
+            Add Product
+          </Button>
+          <Modal
+            show={show}
+            addText="Add New Product"
+            ModalContent={ModalContent}
+            handleClose={handleClose}
+          />
+
+          <Button variant="secondary" onClick={handleShowCategoriesOpen}>
+            Add Category
+          </Button>
+          <Modal
+            show={showCategories}
+            addText="Add New Category"
+            ModalContent={CategoryModalContent}
+            handleClose={handleShowCategoriesClose}
+          />
+        </div>
+      </div>
+
+      {/* Sorting and Filtering  */} 
+       <div className="sortFilterContainer">
+        <div className="Sorting">
+        <h5>Sort</h5>
+        </div>
+
+        <div className="filtering">
+            <h5>Filter</h5>
+        </div>
+      </div>
+
+      <div className="useresGrid">
+        {products
+          .filter(
+            (product) =>
+              product?.name.toLowerCase().includes(searchText.toLowerCase()) ||
+              product?.category
+                .toLowerCase()
+                .includes(searchText.toLowerCase()) ||
+              product?.price.toString().includes(searchText.toLowerCase()) ||
+              getUserById(product?.soldBy)
+                .toLowerCase()
+                .includes(searchText.toLowerCase())
+          )
+          .map((product) => {
+            return <ProductCard key={product.id} product={product} />;
+          })}
+      </div>
+    </>
+  );
+}
+
+
+
+function CategoryModalContent() {
+  const dispatch = useDispatch();
+  // const existing = useSelector((state) => state.Ca);
+  const existing = store.getState().CategoriesSlice.categories
+  const [categoryName_form, setCategoryName_form] = useState("");
+  // const [productPrice_form, setProductPrice_form] = useState("");
+
+  // const [productCategory_form, setProductCategory_form] = useState("");
+
+  // const [productImg_form, setProductImg_form] = useState("");
+
+  const [alret, setAlret] = useState(false);
+  const [variant, setVariant] = useState("");
+  const [message, setMessage] = useState("");
+
+  // const productImg = useRef();
+  // const categorySelected = useRef();
+  // const userSelcted = useRef();
+  const handleAddCategory = (e) => {
+    e.preventDefault();
+    if (categoryName_form.length == 0) {
+      // productCategory_form.length < 5
+      setAlret(!alret);
+      setMessage("Empty Category Name is not Allowed");
+      setVariant("danger");
+      return;
+    }
+    // console.log(productImg.current.value); //done
+    // console.log(categorySelected.current.value); //done
+    const data = {
+      id: uuidv4(),
+      name: categoryName_form,
+    };
+    dispatch(addCategory({ data, existing }));
+  };
+
+  const Alret = ({ variant, message }) => {
+    const [show, setShow] = useState(true);
+    if (show) {
+      return (
+        <Alert variant={variant} onClose={() => setShow(false)} dismissible>
+          {/* <Alert.Heading>Oh snap! You got an error!</Alert.Heading> */}
+          <p>{message}</p>
+        </Alert>
+      );
+    }
+  };
+
+  // const users = store.getState().UsersSlice.users;
+
+  return (
+    <Form onSubmit={handleAddCategory}>
+      {alret && <Alret variant={variant} message={message} />}
+      <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Label>Category Name</Form.Label>
+        <Form.Control
+          value={categoryName_form}
+          onChange={(e) => setCategoryName_form(e.target.value)}
+          type="text"
+          placeholder="Enter Category Name"
+        />
+      </Form.Group>
+      <Button variant="secondary" type="submit">
+        Submit
+      </Button>
+    </Form>
+  );
+}
+
+
+
+function ModalContent() {
+  const dispatch = useDispatch();
+  const existing = useSelector((state) => state.ProductsSlice.products);
+  const categories = store.getState().CategoriesSlice.categories;
+
+  const [productName_form, setProductName_form] = useState("");
+  const [productPrice_form, setProductPrice_form] = useState("");
+
+  // const [productCategory_form, setProductCategory_form] = useState("");
+
+  const [productImg_form, setProductImg_form] = useState("");
+
+  const [alret, setAlret] = useState(false);
+  const [variant, setVariant] = useState("");
+  const [message, setMessage] = useState("");
+
+  // const productImg = useRef();
+  const categorySelected = useRef();
+  const userSelcted = useRef();
+  const handleAddProduct = (e) => {
+    e.preventDefault();
+    if (productName_form.length < 5 || productPrice_form < 0) {
+      // productCategory_form.length < 5
+      setAlret(!alret);
+      setMessage("Fields are Missing");
+      setVariant("danger");
+      return;
+    }
+    // console.log(productImg.current.value); //done
+    // console.log(categorySelected.current.value); //done
+    const data = {
+      id: uuidv4(),
+      name: productName_form,
+      price: productPrice_form,
+      category: categorySelected.current.value,
+      productImg: productImg_form,
+      soldBy: userSelcted.current.value,
+    };
+    dispatch(addProduct({ data, existing }));
+  };
+  const Alret = ({ variant, message }) => {
+    const [show, setShow] = useState(true);
+    if (show) {
+      return (
+        <Alert variant={variant} onClose={() => setShow(false)} dismissible>
+          {/* <Alert.Heading>Oh snap! You got an error!</Alert.Heading> */}
+          <p>{message}</p>
+        </Alert>
+      );
+    }
+  };
+
+  const users = store.getState().UsersSlice.users;
+
+  return (
+    <Form onSubmit={handleAddProduct}>
+      {alret && <Alret variant={variant} message={message} />}
+      <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Label>Product Name</Form.Label>
+        <Form.Control
+          value={productName_form}
+          onChange={(e) => setProductName_form(e.target.value)}
+          type="text"
+          placeholder="Enter Product Name"
+        />
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>Price</Form.Label>
+        <Form.Control
+          required
+          value={productPrice_form}
+          onChange={(e) => setProductPrice_form(e.target.value)}
+          type="number"
+          placeholder="Enter Price"
+        />
+      </Form.Group>
+
+      <Form.Group className="mb-3" controlId="">
+        <Form.Label>Category</Form.Label>
+        <Form.Select ref={categorySelected}>
+          <option value="N/A">N/A</option>
+          {categories.map((category)=>{
+            return <option value={category.name}>{category.name}</option>
+          })}
+          {/* <option>Furniture</option>
+          <option>Appral</option>
+          <option>Shoes</option> */}
+          {/* <option>Category 4</option> */}
+        </Form.Select>
+      </Form.Group>
+
+      <Form.Group className="mb-3" controlId="">
+        <Form.Label>Sold By</Form.Label>
+        <Form.Select ref={userSelcted}>
+          <option key={0} value="N/A">
+            Not Available
+          </option>
+          {users?.map((user) => {
+            return (
+              <option key={user.id} value={user.id}>
+                {user.name}
+              </option>
+            );
+          })}
+          {/* <option>Furniture</option>
+          <option>Appral</option>
+          <option>Shoes</option> */}
+          {/* <option>Category 4</option> */}
+        </Form.Select>
+      </Form.Group>
+
+      {/* <Form.Group controlId="formFile" className="mb-3">
+        <Form.Label>Set Product Image</Form.Label>
+        <Form.Control ref={productImg} type="file" />
+      </Form.Group> */}
+      <Form.Group className="mb-3" controlId="">
+        <Form.Label>Img URL</Form.Label>
+        <Form.Control
+          type="text"
+          value={productImg_form}
+          onChange={(e) => setProductImg_form(e.target.value)}
+          placeholder="Enter Address"
+        />
+      </Form.Group>
+
+      <Button variant="secondary" type="submit">
+        Submit
+      </Button>
+    </Form>
+  );
+}
+
+function SearchBar({ searchText, setSearchText }) {
+  return (
+    <>
+      <InputGroup className="mb-3">
+        <InputGroup.Text id="basic-addon1">@</InputGroup.Text>
+        <Form.Control
+          placeholder="Product"
+          aria-label="Product"
+          aria-describedby="basic-addon1"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+        />
+      </InputGroup>
+    </>
+  );
+}

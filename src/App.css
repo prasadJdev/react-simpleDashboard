@@ -1,0 +1,226 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+/* body{
+  background-color: #000 !important;
+}  */
+
+.navLinks {
+  display: flex;
+  width: 50%;
+  justify-content: space-around;
+  align-items: center;
+}
+.navLink {
+  text-align: center;
+  height: 100%;
+  list-style: none;
+  opacity: 0.75;
+  color: #fff !important;
+  height: 50px;
+  margin: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+a {
+  text-decoration: none !important;
+  color: inherit;
+}
+::-webkit-scrollbar {
+  display: none;
+}
+.sideNavebar {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  list-style: none;
+  flex-direction: column;
+  max-width: 250px;
+  background: #000;
+  margin-bottom: 0 !important;
+  /* height: calc(100vh - 50px); */
+  height: 100vh;
+  padding: 0 !important;
+  /* padding: 1rem; */
+}
+.sideNavebar li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+.sideNavebar li a {
+  text-align: center;
+
+  padding: 1rem;
+
+  width: 100%;
+  min-width: 150px;
+  color: #fff !important;
+  width: 100%;
+  transition: all 0.25s;
+}
+.sideNavebar li:hover {
+  background-color: #fff !important;
+  opacity: 0.75;
+}
+.sideNavebar li:hover a {
+  color: #000 !important;
+}
+
+.siteContent {
+  overflow: hidden;
+  overflow-y: scroll;
+  width: 100%;
+  /* padding: 1rem; */
+  margin-bottom: 0;
+  max-height: calc(100vh);
+}
+
+.dashboardComponents {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 2rem;
+}
+
+.dashboardComponents .card {
+  min-width: 150px;
+}
+
+.dashboardComponents .card-header {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bolder;
+  text-transform: uppercase;
+}
+.dashboardComponents .card-body {
+  text-align: center;
+  font-size: 5rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.searchNav {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 1rem 2rem;
+}
+.searchNav .input-group {
+  width: auto !important;
+  margin-right: 1rem;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0 !important;
+  align-items: center;
+}
+.total_count {
+  display: flex;
+  margin-right: 1rem;
+  font-size: 2rem;
+  font-weight: 400;
+}
+.total_count span {
+  color: blueviolet;
+}
+.total_count_filter {
+  color: blue;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+
+.total_count_users {
+  color: red;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+
+.card_buttons {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+.useresGrid .card {
+  /* background-color: #000; */
+  -webkit-box-shadow: 3px 3px 12px -1px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 3px 3px 12px -1px rgba(0, 0, 0, 0.5);
+  box-shadow: 3px 3px 12px -1px rgba(0, 0, 0, 0.5);
+  margin-top: 1rem;
+
+  /* transition: all 5s !important; */
+}
+
+.useresGrid .card:hover {
+  /* cursor: pointer; */
+  /* transition: all 5s !important; */
+  -webkit-box-shadow: inset 6px 6px 22px -9px rgba(0, 0, 0, 0.74);
+  -moz-box-shadow: inset 6px 6px 22px -9px rgba(0, 0, 0, 0.74);
+  box-shadow: inset 6px 6px 22px -9px rgba(0, 0, 0, 0.74);
+}
+
+.userCardBody .card-text {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.useresGrid {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  grid-template-rows: minmax(7rem, auto);
+  grid-gap: 5px;
+  height: auto;
+  padding: 2rem;
+}
+.productModal{
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+}
+.cardProductImg{
+  width: 100%;
+  /* max-width: 250px; */
+  max-height: 250px;
+  object-fit: cover;
+  background-size: cover;
+}
+
+.sortFilterContainer{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 2rem ;
+}
+
+@media screen and (max-width: 780px) {
+  .useresGrid {
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    /* max-width: 250px; */
+    grid-template-columns: repeat(1, auto) ;
+    padding: 0;
+    /* grid-template-rows: minmax(7rem, auto); */
+    /* grid-gap: 1rem; */
+    /* height: auto; */
+    /* padding: 1rem; */
+  }
+  .card{
+    width: 16rem !important;
+  }
+  .total_count{
+    display: none;
+  }
+  .sideNavebar {
+    display: none !important;
+  }
+
+}
